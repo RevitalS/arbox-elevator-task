@@ -1,0 +1,24 @@
+th, td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ebe8e8;
+    background-color: white;
+  }
+
+  table {
+    border-collapse: collapse;
+    border: 1px solid #ebe8e8;
+    text-align:center;
+    margin: auto;
+    width: 50%;
+   /* display: flex;*/
+  }
+
+  .clear-table-style {
+      background-color: transparent;
+      border: 0px;
+  }
+
+  button {
+      background-color: #a2c7a4;
+  }
