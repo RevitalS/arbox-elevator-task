@@ -9,7 +9,12 @@ import useSound from 'use-sound';
 
 
 
-
+const initElavators = [{floor: 0, isAvalible: true, color:"black"},
+ {floor: 0, isAvalible: true, color:"black"},
+ {floor: 0, isAvalible: true, color:"black"},
+ {floor: 0, isAvalible: true, color:"black"},
+ {floor: 0, isAvalible: true, color:"black"}
+]
 //let callQueue =[];
 
 export default function Table() {
@@ -17,12 +22,14 @@ export default function Table() {
     const [elevatorsLocation, setElevatorsLocation] = useState([0,0,0,0,0]);
     const [elevatorsAvailable, setElevatorsAvailable] = useState([true,true,true,true,true]);
     const [callsQueue, setCallsQueue] = useState([]);
-    
+
+    const [elevatorsList, setElevatorsList] = useState(initElavators);
+
     useEffect(() => {
         if (callsQueue.length !== 0 && checkIfHasAvalibleElavator()) {
-            console.log(callsQueue , 'queue')
+          //  console.log(callsQueue , 'queue')
             const call = callsQueue;
-            console.log(callsQueue.slice(1), "q after slice");
+           // console.log(callsQueue.slice(1), "q after slice");
            // let call1 = callsQueue.shift();
             //console.log(call1);
             callElevator(callsQueue[0]);
@@ -32,18 +39,19 @@ export default function Table() {
         });
 
     const addCallToQueue = (floor) => {
-        console.log(floor);
+       // console.log(floor);
         setCallsQueue(old => [...old, floor]);
         
     } 
 
     const checkIfHasAvalibleElavator = () => {
-        return (elevatorsAvailable.some(e => e === true));
+        return (elevatorsList.some(e => e.isAvalible === true));
     }
 
     const findAvalibleElavators = () =>{
-          const e = elevatorsAvailable.map((e,i) =>  e === true ? elevatorsLocation[i]: null);
-          console.log(e);
+          const e = elevatorsList.map((e,i) =>  e.isAvalible === true ? 
+          elevatorsList[i].floor: null);
+        //  console.log(e);
           return e;
     }
 
@@ -53,20 +61,20 @@ export default function Table() {
         // if (elevatorNum >= 0) {
         //     return elevatorNum;
         // }
-        if (!checkIfHasAvalibleElavator()) {
-            console.log('unavalible');
-            return null;
-        }
+        // if (!checkIfHasAvalibleElavator()) {
+        //     console.log('unavalible');
+        //     return null;
+        // }
         const avalibleElevators = findAvalibleElavators();
         let elevatorNum; //= elevatorsLocation.findIndex(x => floor === x);
         //= elevatorsLocation.map((e ,i) =>  elevatorsAvailable[i] === true? e : null);
-        console.log(avalibleElevators, 'avalibleElevators');
+       // console.log(avalibleElevators, 'avalibleElevators');
         //if (avalibleElevators.length > 0) {
             const distance = avalibleElevators.map(e => e !== null ? Math.abs(floor - e): Infinity);
-            console.log(distance);
+           // console.log(distance);
             const minDistance = Math.min(...distance);
             elevatorNum = distance.findIndex(x => x <= minDistance);
-            console.log(elevatorNum);
+            //console.log(elevatorNum);
             return elevatorNum;
         //}
     }
@@ -77,18 +85,42 @@ export default function Table() {
         const elevatorNum = findcolsetElevator(floor);
         //console.log(elevatorNum, 'e n');
        // if (elevatorNum !== null) {
-            setElevatorsAvailable(prev => prev.map((e,i) => i  === elevatorNum ? false: e));
-            setElevatorsLocation(prev => prev.map((e,i) => i  === elevatorNum ? floor: e));
-            console.log(elevatorsAvailable);
-            const time = setTimeout(() => { 
-            setElevatorsAvailable(prev => prev.map((e,i) => i  === elevatorNum ? true: e));
-        //        console.log(elevatorsAvailable);
-            }, 2000);
+        //     setElevatorsAvailable(prev => prev.map((e,i) => i  === elevatorNum ? false: e));
+        //     setElevatorsLocation(prev => prev.map((e,i) => i  === elevatorNum ? floor: e));
+        //     console.log(elevatorsAvailable);
+        //     const timeEnd = performance.now();
+        //     console.log(timeEnd - pStart);
+        //     const time = setTimeout(() => { 
+        //     setElevatorsAvailable(prev => prev.map((e,i) => i  === elevatorNum ? true: e));
+        // //        console.log(elevatorsAvailable);
+        //     }, 2000);
             
+            //setElevatorsAvailable(prev => prev.map((e,i) => i  === elevatorNum ? false: e));
+            setElevatorsList(prev => prev.map((e,i) => {if (i  === elevatorNum ){
+                let newE = e;
+                newE.floor = floor;
+                newE.isAvalible = false;
+                return newE;
+                } else {return e}
+                }));
+                // setElevatorsList(prev => prev.map((e,i) => i  === elevatorNum ? 
+                // {...e, [e.floor]:floor, [e.isAvalible]:false}: e));
+             //   console.log(elevatorsList);
+            //console.log(elevatorsAvailable);
+            const timeEnd = performance.now();
+            console.log(timeEnd - pStart);
+            const time = setTimeout(() => { 
+            setElevatorsList(prev => prev.map((e,i) =>{ if (i  === elevatorNum) {
+                let ele = e;
+                e.isAvalible = true;
+                return ele;
+             }else { return e}
+        }));
+              //  console.log(elevatorsList);
+            }, 2000);
            // console.log(elevatorsLocation, 'el');
        // }
-        const timeEnd = performance.now();
-        console.log(timeEnd- pStart);
+
     }
 
     return (
@@ -105,6 +137,7 @@ export default function Table() {
                             return <td className="" key={(row+1)+""+(col + 1)}>
                                 <Elevator elevatorIcon={elevatorIcon} 
                                 elevatorsLocation={elevatorsLocation} floor={floor} col={col} 
+                                elevator={elevatorsList}
                                 >
                                 </Elevator>
                             </td>
