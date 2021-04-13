@@ -4,8 +4,15 @@ import './ElevatorButton.css'
 export default function ElevatorButton(props) {
 
     const [buttonStr, setButtonStr] = useState('Call');
+    const [color, setColor] = useState('green');
+
+    const onClick = () => {
+        setButtonStr('Waiting');
+        setColor('red');
+        props.callElevator(props.floor);
+    }
 
     return (
-    <button key={'btn'+(props.index+1)}>{buttonStr}</button>
+    <button className={color} key={'btn'+(props.floor+1)} onClick={onClick}>{buttonStr}</button>
     );
 }

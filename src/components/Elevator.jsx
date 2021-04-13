@@ -6,7 +6,9 @@ import './Elevator.css'
 export default function Elevator(props) {
 
     const checkIfElevetorHere = (row, col) => {
+       // console.log(row, col);
         if (props.elevatorsLocation[col] === row) {
+           // debugger;
             return true;
         }
         return false;
@@ -14,7 +16,7 @@ export default function Elevator(props) {
 
     return (
         checkIfElevetorHere(props.floor, props.col)?
-        <img src={props.elevatorIcon} alt='elevator'/>
+        <img className="elevator" src={props.elevatorIcon} alt='elevator'/>
         :
         null
     );

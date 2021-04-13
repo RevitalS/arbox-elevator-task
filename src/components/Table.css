@@ -19,6 +19,6 @@ th, td {
       border: 0px;
   }
 
-  button {
-      background-color: #a2c7a4;
+  .button-waper {
+      margin-left: 0px;
   }
