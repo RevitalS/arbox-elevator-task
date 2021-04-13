@@ -100,6 +100,7 @@ export default function Table() {
                 let newE = e;
                 newE.floor = floor;
                 newE.isAvalible = false;
+                newE.color = "green-e";
                 return newE;
                 } else {return e}
                 }));
@@ -113,9 +114,11 @@ export default function Table() {
             setElevatorsList(prev => prev.map((e,i) =>{ if (i  === elevatorNum) {
                 let ele = e;
                 e.isAvalible = true;
+                e.color = "black";
                 return ele;
              }else { return e}
         }));
+
               //  console.log(elevatorsList);
             }, 2000);
            // console.log(elevatorsLocation, 'el');
@@ -137,13 +140,13 @@ export default function Table() {
                             return <td className="" key={(row+1)+""+(col + 1)}>
                                 <Elevator elevatorIcon={elevatorIcon} 
                                 elevatorsLocation={elevatorsLocation} floor={floor} col={col} 
-                                elevator={elevatorsList}
+                                elevators={elevatorsList}
                                 >
                                 </Elevator>
                             </td>
                         })}
                         <td className="clear-table-style button-waper">
-                            <ElevatorButton floor={floor} callElevator={addCallToQueue}/>
+                            <ElevatorButton key={floor} floor={floor} callElevator={addCallToQueue}/>
                         </td>
                     </tr>)
                         })}

@@ -8,7 +8,7 @@ export default function Elevator(props) {
     const checkIfElevetorHere = (row, col) => {
        // console.log(row, col);
 
-        if (props.elevator[col].floor === row) {
+        if (props.elevators[col].floor === row) {
             return true;
         }
 
@@ -21,7 +21,7 @@ export default function Elevator(props) {
 
     return (
         checkIfElevetorHere(props.floor, props.col)?
-        <img className="elevator" src={props.elevatorIcon} alt='elevator'/>
+        <img className={props.elevators[props.col].color} src={props.elevatorIcon} alt='elevator'/>
         :
         null
     );
