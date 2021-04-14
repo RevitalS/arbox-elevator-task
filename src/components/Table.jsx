@@ -3,10 +3,7 @@ import './Table.css';
 import './ElevatorButton';
 import './Elevator';
 import ElevatorButton from './ElevatorButton';
-import elevatorIcon from '../icons-elevator.svg';
 import Elevator from './Elevator';
-import useSound from 'use-sound';
-
 
 
 const initElavators = [{floor: 0, isAvalible: true, color:"black"},
@@ -15,13 +12,16 @@ const initElavators = [{floor: 0, isAvalible: true, color:"black"},
  {floor: 0, isAvalible: true, color:"black"},
  {floor: 0, isAvalible: true, color:"black"}
 ]
-//let callQueue =[];
 
 export default function Table() {
 
    // const [elevatorsLocation, setElevatorsLocation] = useState([0,0,0,0,0]);
    // const [elevatorsAvailable, setElevatorsAvailable] = useState([true,true,true,true,true]);
     const [callsQueue, setCallsQueue] = useState([]);
+    const [currentQueue, setCurrentQueue] = useState([]);
+    const [buttonsText, setButtonsText] = useState(
+        ['Call','Call','Call','Call','Call','Call','Call','Call','Call','Call'])
+
 
     const [elevatorsList, setElevatorsList] = useState(initElavators);
 
@@ -32,8 +32,43 @@ export default function Table() {
         } 
         });
 
+        useEffect(() => {
+            if (currentQueue.length !== 0) 
+            {
+                const current = currentQueue[0];
+                
+                if (currentQueue.length === 1) {
+                    setButtonsText(prev => prev.map((text,i) => i === current.floor ? 'Arrived': text));
+                    setTimeout(() => { 
+                    setElevatorsList(prev => prev.map((e,i) => {if (i  === current.num ){
+                        let newE = e;
+                        newE.floor = current.floor;
+                        newE.isAvalible = false;
+                        newE.color = "green-e";
+                        return newE;
+                        } else {return e}
+                        }));
+                    },20);
+                }
+                else {
+                    setTimeout(() => { 
+                        setElevatorsList(prev => prev.map((e,i) => {if (i  === current.num ){
+                            let newE = e;
+                            newE.floor = current.floor;
+                            newE.isAvalible = false;
+                            newE.color = "red-e";
+                            return newE;
+                            } else {return e}
+                            }));
+                        },20);
+                }
+                setCurrentQueue(currentQueue.slice(1));
+            } 
+            
+            }, [currentQueue]);
+
+
     const addCallToQueue = (floor) => {
-       // console.log(floor);
         setCallsQueue(old => [...old, floor]);
         
     } 
@@ -45,8 +80,21 @@ export default function Table() {
     const findAvalibleElavators = () =>{
           const e = elevatorsList.map((e,i) =>  e.isAvalible === true ? 
           elevatorsList[i].floor: null);
-        //  console.log(e);
           return e;
+    }
+
+    const moveElevator = (num, min, floor) => {
+        setButtonsText(prev => prev.map((text,i) => i === floor ? 'Waiting': text));
+        for (let i = 1; i <= min; i++) {
+            let newFloor;
+            if (elevatorsList[num].floor < floor) {
+                newFloor = elevatorsList[num].floor+i;
+            } else {
+                newFloor = elevatorsList[num].floor-i;
+
+            }
+            setCurrentQueue(old => [...old, {num: num,floor:newFloor}]);
+        }
     }
 
     const findcolsetElevator = (floor) => {
@@ -55,20 +103,22 @@ export default function Table() {
         let elevatorNum; 
 
             const distance = avalibleElevators.map(e => e !== null ? Math.abs(floor - e): Infinity);
-           // console.log(distance);
             const minDistance = Math.min(...distance);
             elevatorNum = distance.findIndex(x => x <= minDistance);
-            //console.log(elevatorNum);
+            moveElevator(elevatorNum, minDistance, floor);
             return elevatorNum;
-        //}
     }
 
+
     const callElevator = (floor) => {
-       // debugger;
        const pStart = performance.now();
         const elevatorNum = findcolsetElevator(floor);
 
-            setElevatorsList(prev => prev.map((e,i) => {if (i  === elevatorNum ){
+        if (currentQueue.length !== 0 ) {
+            setCurrentQueue([]);
+        }
+            setElevatorsList(prev => prev.map((e,i) => 
+            {if (i  === elevatorNum && e.color ==='red-e' ){
                 let newE = e;
                 newE.floor = floor;
                 newE.isAvalible = false;
@@ -76,19 +126,32 @@ export default function Table() {
                 return newE;
                 } else {return e}
                 }));
+                
             const timeEnd = performance.now();
             console.log(timeEnd - pStart);
-            const time = setTimeout(() => { 
-            setElevatorsList(prev => prev.map((e,i) =>{ if (i  === elevatorNum) {
-                let ele = e;
-                e.isAvalible = true;
-                e.color = "black";
-                return ele;
-             }else { return e}
-        }));
+            setTimeout(() => { 
+            setElevatorsList(prev => prev.map((e,i) =>{ 
+                if (i  === elevatorNum) {
+                    let ele = e;
+                    e.isAvalible = true;
+                    e.color = "black";
+                    return ele;
+                }else { return e}
+            }));
+            setButtonsText(prev => prev.map((text,i) => i === floor ? 'Call': text));
             }, 2000);
 
 
+    }
+
+    const floorLabel = (floor) => {
+        if (floor === 0) {
+            return 'Ground Floor'
+        }
+        if (floor === 1) {
+            return '1st'
+        }
+        return floor+'th'
     }
 
     return (
@@ -98,20 +161,25 @@ export default function Table() {
                     {[...Array(10)].map((v, row) => {
                         const floor = 10-row-1;
                      return (<tr key={row+1}>
-                         <td className="clear-table-style" key={floor}>
-                             <label className="clear-table-style">{floor+'th'}</label>
+                         <td className="clear-table-style floor-num" key={floor}>
+                             <label className="clear-table-style ">{floorLabel(floor)}</label>
                         </td>
-                        {[...Array(5)].map((e, col) => {
-                            return <td className="" key={(row+1)+""+(col + 1)}>
-                                <Elevator elevatorIcon={elevatorIcon} 
-                                 floor={floor} col={col} 
-                                elevators={elevatorsList}
-                                >
-                                </Elevator>
+                        
+                        {elevatorsList.map((e, col) => {
+                            return (
+
+                             <td className="cell" key={(floor+1)+""+(col + 1)}>
+                                {elevatorsList[col].floor === floor ?
+                                       
+                                         <Elevator color={e.color}/>      
+                                : null }
                             </td>
+                            )
+                            
                         })}
+                        
                         <td className="clear-table-style button-waper">
-                            <ElevatorButton key={floor} floor={floor} callElevator={addCallToQueue}/>
+                            <ElevatorButton key={floor} floor={floor} text={buttonsText[floor]} callElevator={addCallToQueue} elevatorsList={elevatorsList} />
                         </td>
                     </tr>)
                         })}

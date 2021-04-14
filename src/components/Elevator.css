@@ -1,6 +1,4 @@
-.elevator {
-    transition: width 2s, height 4s; 
-}
+
 .red-e {
     filter: invert(0.4) sepia(1) saturate(18.3) hue-rotate(313.2deg) brightness(0.73);
 }
@@ -8,4 +6,8 @@
 .green-e {
     filter: invert(0.4) sepia(1) saturate(18.3) hue-rotate(90deg) brightness(0.75);
 }
+ img {
+   width: 30%;
+}
+
 
