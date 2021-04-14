@@ -12,10 +12,6 @@ export default function Elevator(props) {
             return true;
         }
 
-        // if (props.elevatorsLocation[col] === row) {
-        //    // debugger;
-        //     return true;
-        // }
         return false;
     }
 

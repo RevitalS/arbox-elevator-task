@@ -19,23 +19,17 @@ const initElavators = [{floor: 0, isAvalible: true, color:"black"},
 
 export default function Table() {
 
-    const [elevatorsLocation, setElevatorsLocation] = useState([0,0,0,0,0]);
-    const [elevatorsAvailable, setElevatorsAvailable] = useState([true,true,true,true,true]);
+   // const [elevatorsLocation, setElevatorsLocation] = useState([0,0,0,0,0]);
+   // const [elevatorsAvailable, setElevatorsAvailable] = useState([true,true,true,true,true]);
     const [callsQueue, setCallsQueue] = useState([]);
 
     const [elevatorsList, setElevatorsList] = useState(initElavators);
 
     useEffect(() => {
         if (callsQueue.length !== 0 && checkIfHasAvalibleElavator()) {
-          //  console.log(callsQueue , 'queue')
-            const call = callsQueue;
-           // console.log(callsQueue.slice(1), "q after slice");
-           // let call1 = callsQueue.shift();
-            //console.log(call1);
             callElevator(callsQueue[0]);
             setCallsQueue(callsQueue.slice(1));
-        }
-        
+        } 
         });
 
     const addCallToQueue = (floor) => {
@@ -56,20 +50,10 @@ export default function Table() {
     }
 
     const findcolsetElevator = (floor) => {
-       // debugger
-        // let elevatorNum = elevatorsLocation.findIndex(x => floor === x);
-        // if (elevatorNum >= 0) {
-        //     return elevatorNum;
-        // }
-        // if (!checkIfHasAvalibleElavator()) {
-        //     console.log('unavalible');
-        //     return null;
-        // }
+
         const avalibleElevators = findAvalibleElavators();
-        let elevatorNum; //= elevatorsLocation.findIndex(x => floor === x);
-        //= elevatorsLocation.map((e ,i) =>  elevatorsAvailable[i] === true? e : null);
-       // console.log(avalibleElevators, 'avalibleElevators');
-        //if (avalibleElevators.length > 0) {
+        let elevatorNum; 
+
             const distance = avalibleElevators.map(e => e !== null ? Math.abs(floor - e): Infinity);
            // console.log(distance);
             const minDistance = Math.min(...distance);
@@ -83,19 +67,7 @@ export default function Table() {
        // debugger;
        const pStart = performance.now();
         const elevatorNum = findcolsetElevator(floor);
-        //console.log(elevatorNum, 'e n');
-       // if (elevatorNum !== null) {
-        //     setElevatorsAvailable(prev => prev.map((e,i) => i  === elevatorNum ? false: e));
-        //     setElevatorsLocation(prev => prev.map((e,i) => i  === elevatorNum ? floor: e));
-        //     console.log(elevatorsAvailable);
-        //     const timeEnd = performance.now();
-        //     console.log(timeEnd - pStart);
-        //     const time = setTimeout(() => { 
-        //     setElevatorsAvailable(prev => prev.map((e,i) => i  === elevatorNum ? true: e));
-        // //        console.log(elevatorsAvailable);
-        //     }, 2000);
-            
-            //setElevatorsAvailable(prev => prev.map((e,i) => i  === elevatorNum ? false: e));
+
             setElevatorsList(prev => prev.map((e,i) => {if (i  === elevatorNum ){
                 let newE = e;
                 newE.floor = floor;
@@ -104,10 +76,6 @@ export default function Table() {
                 return newE;
                 } else {return e}
                 }));
-                // setElevatorsList(prev => prev.map((e,i) => i  === elevatorNum ? 
-                // {...e, [e.floor]:floor, [e.isAvalible]:false}: e));
-             //   console.log(elevatorsList);
-            //console.log(elevatorsAvailable);
             const timeEnd = performance.now();
             console.log(timeEnd - pStart);
             const time = setTimeout(() => { 
@@ -118,11 +86,8 @@ export default function Table() {
                 return ele;
              }else { return e}
         }));
-
-              //  console.log(elevatorsList);
             }, 2000);
-           // console.log(elevatorsLocation, 'el');
-       // }
+
 
     }
 
@@ -139,7 +104,7 @@ export default function Table() {
                         {[...Array(5)].map((e, col) => {
                             return <td className="" key={(row+1)+""+(col + 1)}>
                                 <Elevator elevatorIcon={elevatorIcon} 
-                                elevatorsLocation={elevatorsLocation} floor={floor} col={col} 
+                                 floor={floor} col={col} 
                                 elevators={elevatorsList}
                                 >
                                 </Elevator>
